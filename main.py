@@ -1,21 +1,27 @@
 from database import engine
 from fastapi import FastAPI
-from database import Base, engine
+from database import Base, engine, SessionLocal
 from user import User
+from fastapi import HTTPException
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-@app.get("/")
+@app.post("/register")
 def test():
-    connection = None
+    db = SessionLocal()
     try:
-        connection = engine.connect()
-        return {"message" : "Database connected successfully..."}
+        user = User(
+            username = "Najad",
+            email = "najadnabil@gmail.com",
+            hashed_password = "Najad1000"
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return {"message" : "User added successfully."}
     except Exception as e:
-        return {"message" : str(e)}
+        raise HTTPException(status_code=400, detail="Email exists currently.")
     finally:
-        if connection:
-            connection.close()
-
+        db.close()
