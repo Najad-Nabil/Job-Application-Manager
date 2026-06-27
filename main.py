@@ -1,7 +1,7 @@
 from database import engine
 from fastapi import FastAPI
 from database import Base, engine, SessionLocal
-from user import User
+from models import User
 from fastapi import HTTPException
 
 app = FastAPI()
